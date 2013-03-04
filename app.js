@@ -8,7 +8,9 @@ app.configure(function(){
 	app.use(express.static(__dirname + '/public'));
 });
 
-server.listen(3000);
+var port = process.env.PORT || 3000;
+
+server.listen(port);
 
 // routing
 app.get('/', function (req, res) {
