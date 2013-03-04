@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">  
+  <head>
+    <meta charset="utf-8">
+    <title>
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style>
+      body { padding-top: 60px; /* 60px to make the container go all the way
+      to the bottom of the topbar */ }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#">
+            Fast Chat
+          </a>
+          <ul class="nav">
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row-fluid">
+        <div class="span4">
+          <div>
+            <h4></h4>
+            Chat Members
+            <hr>
+            <table id="users" class="table table-striped table-condensed">
+              <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Status</th>                                          
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="2">No Users..</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="span8">
+          <div class="well">
+            <input type="text" id="username" placeholder="Username" class="input-block-level" >
+            <textarea class="input-block-level" id="new_message" name="new_message" placeholder="Type in your message" rows="2"></textarea>
+            <button id="datasend" class="btn btn-info" type="button">Post New Message</button>
+          </div>
+          <h4>Messages</h4>
+          <hr>
+          <table class="table table-striped table-condensed">
+            <tbody id="conversation">
+            </tbody>
+          </table>
+      </div>
+      </div>
+    </div>
+
+    <script src="js/bootstrap.js"></script>
+    <script>
+      var socket = io.connect('http://localhost:3000');
+
+      // on connection to server, ask for user's name with an anonymous callback
+      socket.on('connect', function(){
+        // call the server-side function 'adduser' and send one parameter (value of prompt)
+        socket.emit('newArrival');
+      });
+
+      // listener, whenever the server emits 'updatechat', this updates the chat body
+      socket.on('updatechat', function (username, data) {
+        var message = '<tr><td><span class="label">' + username + '</span> ' + data + '</td></tr>'
+        $('#conversation').prepend(message);
+      });
+
+      // listener, whenever the server emits 'updateusers', this updates the username list
+      socket.on('updateusers', function(data) {
+        $('#users tbody').empty();
+        $.each(data, function(key, value) {
+          $('#users tbody').append('<tr><td>' + key + '</td><td><span class="label label-success">Active</span></td></tr>');
+        });
+      });
+
+      // on load of page
+      $(function(){
+
+        $('#new_message').prop('disabled', true);
+
+        $('#username').blur(function(e){
+          var el = $(this);
+          if (el.val()) {
+            el.prop('disabled', true);
+            $('#new_message').prop('disabled', false);
+            socket.emit('adduser', el.val());
+          };
+        });
+
+        // when the client clicks SEND
+        $('#datasend').click( function() {
+          var message = $('#new_message').val();
+
+          if (! message) return;
+
+          $('#new_message').val('');
+          $('#new_message').focus();
+          // tell server to execute 'sendchat' and send along one parameter
+          socket.emit('sendchat', message);
+        });
+
+        // when the client hits ENTER on their keyboard
+        $('#new_message').keypress(function(e) {
+          if(e.which == 13) {
+            $(this).blur();
+            $('#datasend').trigger('click');
+          }
+        });
+      });
+      </script>
+  </body>
+</html>

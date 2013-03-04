@@ -1,0 +1,8 @@
+{
+  "name": "fast-chat",
+  "description": "fast chat test app",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "3.x"
+  }
+}
