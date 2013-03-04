@@ -32,6 +32,11 @@
     <div class="container">
       <div class="row-fluid">
         <div class="span4">
+          <div class="well">
+            <input type="text" id="username" placeholder="Username" class="input-block-level" >
+            <textarea class="input-block-level" id="new_message" name="new_message" placeholder="Type in your message" rows="4"></textarea>
+            <button id="datasend" class="btn btn-info" type="button">Post New Message</button>
+          </div>
           <div>
             <h4></h4>
             Chat Members
@@ -50,13 +55,7 @@
           </div>
         </div>
         <div class="span8">
-          <div class="well">
-            <input type="text" id="username" placeholder="Username" class="input-block-level" >
-            <textarea class="input-block-level" id="new_message" name="new_message" placeholder="Type in your message" rows="2"></textarea>
-            <button id="datasend" class="btn btn-info" type="button">Post New Message</button>
-          </div>
           <h4>Messages</h4>
-          <hr>
           <table class="table table-striped table-condensed">
             <tbody id="conversation">
             </tbody>
